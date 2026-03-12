@@ -32,8 +32,16 @@ Instead of jumping straight into code, this plugin guides you through a 7-phase 
 
 ## Installation
 
+First, add the repo as a marketplace source:
+
 ```bash
-claude plugin install mbertani/opsx-feature-dev
+claude plugin marketplace add mbertani/opsx-feature-dev
+```
+
+Then install the plugin:
+
+```bash
+claude plugin install opsx-feature-dev
 ```
 
 ## Usage

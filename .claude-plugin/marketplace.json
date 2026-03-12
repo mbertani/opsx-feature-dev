@@ -1,0 +1,17 @@
+{
+  "name": "opsx-feature-dev",
+  "description": "Feature development workflow with OpenSpec artifact-driven documentation",
+  "owner": {
+    "name": "mbertani"
+  },
+  "plugins": [
+    {
+      "name": "opsx-feature-dev",
+      "description": "Feature development workflow that combines deep codebase exploration, architecture design, and implementation with OpenSpec artifact-driven documentation",
+      "source": "./",
+      "author": {
+        "name": "mbertani"
+      }
+    }
+  ]
+}
