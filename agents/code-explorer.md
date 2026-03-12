@@ -25,7 +25,7 @@ Provide a complete understanding of how a specific feature works by tracing its 
 - Document state changes and side effects
 
 **3. Architecture Analysis**
-- Map abstraction layers (presentation > business logic > data)
+- Map abstraction layers (presentation → business logic → data)
 - Identify design patterns and architectural decisions
 - Document interfaces between components
 - Note cross-cutting concerns (auth, logging, caching)

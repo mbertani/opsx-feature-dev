@@ -1,0 +1,3 @@
+# Hash of the official feature-dev plugin version that agents were last synced from.
+# Updated by update-from-upstream.sh after applying upstream changes.
+UPSTREAM_HASH=bd041495bd2a
