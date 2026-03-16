@@ -1,6 +1,6 @@
 # opsx-feature-dev
 
-A Claude Code plugin that combines systematic feature development (codebase exploration, architecture design, quality review) with [OpenSpec](https://github.com/openspec-dev/openspec) artifact-driven documentation.
+A Claude Code plugin that combines systematic feature development (codebase exploration, architecture design, quality review) with [OpenSpec](https://github.com/Fission-AI/OpenSpec/) artifact-driven documentation.
 
 ## What It Does
 
