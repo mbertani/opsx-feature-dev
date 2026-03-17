@@ -95,7 +95,7 @@ When Anthropic updates the official plugin:
 
 ```bash
 # 1. Pull the latest official plugin into your local cache
-claude plugin update feature-dev
+claude plugin update feature-dev@claude-code-plugins
 
 # 2. Compare your agents against the new version
 ./update-from-upstream.sh
