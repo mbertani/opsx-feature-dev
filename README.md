@@ -87,10 +87,10 @@ gh copilot -- plugin install github/copilot-plugins:feature-dev
 
 ```bash
 # In Copilot CLI session
-/opsx-feature-dev Add rate limiting to API endpoints
+/openspec-feature-dev Add rate limiting to API endpoints
 
 # Or start interactively
-/opsx-feature-dev
+/openspec-feature-dev
 ```
 
 The command guides you through each phase, waiting for your input at key decision points (clarifying questions, architecture choice, implementation approval).
