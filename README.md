@@ -93,6 +93,8 @@ gh copilot -- plugin install github/copilot-plugins:feature-dev
 /openspec-feature-dev
 ```
 
+**Note:** The skill appears as `/openspec-feature-dev` (without namespace prefix) in Copilot's skill list.
+
 The command guides you through each phase, waiting for your input at key decision points (clarifying questions, architecture choice, implementation approval).
 
 ### Platform Compatibility
