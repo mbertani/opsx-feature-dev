@@ -142,7 +142,7 @@ This plugin has two upstream dependencies that may change independently:
 
 ### Syncing with the official feature-dev plugin
 
-The three agent files (code-explorer, code-architect, code-reviewer) are derived from [Anthropic's feature-dev plugin](https://github.com/anthropics/claude-plugins-official). The `UPSTREAM_VERSION` file tracks which version they were last synced from.
+The three agent files (code-explorer, code-architect, code-reviewer) are derived from [Anthropic's feature-dev plugin](https://github.com/anthropics/claude-plugins-official). The command file (`feature-dev.md`) is also based on upstream but includes OpenSpec-specific additions (change creation, artifact generation, apply instructions, archive workflow, output formats, guardrails). The `UPSTREAM_VERSION` file tracks which version was last synced.
 
 When Anthropic updates the official plugin:
 
@@ -150,24 +150,38 @@ When Anthropic updates the official plugin:
 # 1. Pull the latest official plugin into your local cache
 claude plugin update feature-dev@claude-code-plugins
 
-# 2. Compare your agents against the new version
+# 2. Compare your agents and command against the new version
 ./update-from-upstream.sh
 
-# 3. If agent diffs are shown, apply them automatically
+# 3. Apply updates automatically
 ./update-from-upstream.sh --apply
 
 # 4. Review and commit
 git diff
-git commit -am "Sync agents with upstream"
+git commit -am "Sync with upstream feature-dev"
 git push
 ```
 
 The script will:
 - Show whether a new upstream version is available (hash comparison)
 - Diff each agent file and the command file
-- With `--apply`: copy updated agents and update the `UPSTREAM_VERSION` hash
+- With `--apply`:
+  - Copy updated agent files directly (these are identical to upstream)
+  - Copy the upstream command file, then apply `openspec-command.patch` to re-add OpenSpec customizations
+  - Update the `UPSTREAM_VERSION` hash
 
-The command file (`feature-dev.md`) will always differ from upstream because it includes the OpenSpec integration. The script flags this but won't overwrite it - review command diffs manually for workflow changes you may want to incorporate.
+#### When the patch fails to apply
+
+If upstream changes conflict with the OpenSpec patch, the script will report the failure. To resolve:
+
+1. Review the conflict — the upstream command is already copied to `commands/feature-dev.md`
+2. Manually (or with Claude's help) merge the OpenSpec additions back in
+3. Regenerate the patch:
+   ```bash
+   diff -u <upstream-command-path> commands/feature-dev.md > openspec-command.patch
+   ```
+4. Fix the patch header to use git-style paths (`a/commands/feature-dev.md` / `b/commands/feature-dev.md`)
+5. Commit both the updated command and patch files
 
 ### Syncing with OpenSpec CLI
 
@@ -219,6 +233,7 @@ opsx-feature-dev/
 ├── README.md                # Documentation (this file)
 ├── check-compat.sh          # OpenSpec compatibility check
 ├── update-from-upstream.sh  # Sync with upstream feature-dev
+├── openspec-command.patch   # OpenSpec additions to upstream command
 ├── OPENSPEC_COMPAT         # OpenSpec version tracking
 └── UPSTREAM_VERSION         # Upstream sync tracking
 ```
