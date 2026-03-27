@@ -185,6 +185,38 @@ if [[ "${1:-}" == "--apply" ]]; then
     fi
   done
 
+  # ── Apply OpenSpec patch to upstream command ───────────────────
+  PATCH_FILE="$SCRIPT_DIR/openspec-command.patch"
+
+  if [[ -f "$PATCH_FILE" && -f "$UPSTREAM_CMD" ]]; then
+    echo ""
+    echo "--- Command (patch) ---"
+    echo ""
+
+    # Copy upstream command, then apply OpenSpec patch
+    cp "$UPSTREAM_CMD" "$LOCAL_CMD"
+
+    if git -C "$SCRIPT_DIR" apply "$PATCH_FILE" 2>/dev/null; then
+      echo "  OK    Applied OpenSpec patch to upstream command"
+    else
+      # Fall back to 3-way merge so conflicts are visible
+      cp "$UPSTREAM_CMD" "$LOCAL_CMD"
+      if git -C "$SCRIPT_DIR" apply --3way "$PATCH_FILE" 2>/dev/null; then
+        echo "  MERGE Applied OpenSpec patch with 3-way merge (check for conflicts)"
+      else
+        echo "  FAIL  OpenSpec patch did not apply cleanly."
+        echo "        The upstream command has been copied to: $LOCAL_CMD"
+        echo "        Patch file: $PATCH_FILE"
+        echo ""
+        echo "        To resolve manually, review the conflict and update the patch:"
+        echo "          1. Edit commands/feature-dev.md to add OpenSpec changes"
+        echo "          2. Regenerate the patch:"
+        echo "             diff -u <upstream-cmd> commands/feature-dev.md > openspec-command.patch"
+        echo "             (fix header to use a/ b/ paths)"
+      fi
+    fi
+  fi
+
   # Update version file
   cat > "$VERSION_FILE" <<VEOF
 # Hash of the official feature-dev plugin version that agents were last synced from.

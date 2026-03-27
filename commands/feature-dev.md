@@ -9,11 +9,12 @@ You are helping a developer implement a new feature using a systematic workflow 
 
 ## Core Principles
 
-- **Ask clarifying questions**: Identify all ambiguities and edge cases. Ask specific, concrete questions rather than making assumptions. Wait for answers before proceeding.
+- **Ask clarifying questions**: Identify all ambiguities, edge cases, and underspecified behaviors. Ask specific, concrete questions rather than making assumptions. Wait for user answers before proceeding with implementation. Ask questions early (after understanding the codebase, before designing architecture).
 - **Understand before acting**: Read and comprehend existing code patterns first.
-- **Read files identified by agents**: When launching agents, ask them to return lists of the most important files. After agents complete, read those files to build detailed context.
+- **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
+- **Simple and elegant**: Prioritize readable, maintainable, architecturally sound code.
 - **Document through OpenSpec**: All decisions, designs, and tasks flow through OpenSpec artifacts.
-- **Use TodoWrite**: Track phase progress throughout the workflow.
+- **Use TodoWrite**: Track all progress throughout the workflow.
 
 ---
 
@@ -48,17 +49,18 @@ Initial request: $ARGUMENTS
 
 **Actions**:
 1. Launch 2-3 **code-explorer** agents in parallel. Each agent should:
-   - Trace through the code comprehensively
-   - Focus on a different aspect (similar features, architecture, user experience)
-   - Return a list of 5-10 key files to read
+   - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
+   - Target a different aspect of the codebase (e.g. similar features, high level understanding, architectural understanding, user experience)
+   - Include a list of 5-10 key files to read
 
    **Example agent prompts**:
    - "Find features similar to [feature] and trace through their implementation comprehensively"
    - "Map the architecture and abstractions for [feature area], tracing through the code comprehensively"
    - "Analyze the current implementation of [existing feature/area], tracing through the code comprehensively"
+   - "Identify UI patterns, testing approaches, or extension points relevant to [feature]"
 
-2. Once agents return, read all identified files to build deep understanding.
-3. Present a comprehensive summary of findings and patterns discovered.
+2. Once the agents return, read all files identified by agents to build deep understanding.
+3. Present comprehensive summary of findings and patterns discovered.
 
 ---
 
@@ -88,7 +90,7 @@ If the user says "whatever you think is best", provide your recommendation and g
    - Clean architecture (maintainability, elegant abstractions)
    - Pragmatic balance (speed + quality)
 
-2. Review all approaches and form your opinion on which fits best.
+2. Review all approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context).
 
 3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences.
 
@@ -117,6 +119,8 @@ If the user says "whatever you think is best", provide your recommendation and g
    openspec status --change "<name>" --json
    ```
    Ensure all `applyRequires` artifacts are `done`.
+
+7. **Ask the user if they want to review the OpenSpec artifacts before continuing to implementation.** Pause and wait for their response. If they want to review, list the artifact file paths so they can inspect them. Only proceed to Phase 5 once the user confirms they are ready.
 
 ---
 
@@ -150,14 +154,14 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ## Phase 6: Quality Review
 
-**Goal**: Ensure code is simple, DRY, elegant, and functionally correct.
+**Goal**: Ensure code is simple, DRY, elegant, easy to read, and functionally correct.
 
 **Actions**:
 1. Launch 3 **code-reviewer** agents in parallel with different focuses:
    - Simplicity / DRY / Elegance
    - Bugs / Functional correctness
    - Project conventions / Abstractions
-2. Consolidate findings and identify highest severity issues.
+2. Consolidate findings and identify highest severity issues that you recommend fixing.
 3. **Present findings to user and ask what they want to do** (fix now, fix later, or proceed as-is).
 4. Address issues based on user decision.
 
