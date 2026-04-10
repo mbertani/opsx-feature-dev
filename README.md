@@ -1,6 +1,6 @@
 # opsx-feature-dev
 
-A feature development workflow that combines systematic feature development (codebase exploration, architecture design, quality review) with [OpenSpec](https://github.com/openspec-dev/openspec) artifact-driven documentation.
+A feature development workflow that combines systematic feature development (codebase exploration, architecture design, quality review) with [OpenSpec](https://openspec.dev/) artifact-driven documentation.
 
 **Supports:** Claude Code | GitHub Copilot
 
@@ -32,6 +32,9 @@ Instead of jumping straight into code, this plugin guides you through a 7-phase 
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed, **or**
   - [GitHub Copilot CLI](https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line) installed
 - [OpenSpec CLI](https://github.com/Fission-AI/OpenSpec/) installed and configured in your project
+  ```bash
+  brew install openspec
+  ```
 
 ## Installation
 
