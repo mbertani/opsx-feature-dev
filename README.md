@@ -66,14 +66,6 @@ Or install via the `gh` wrapper:
 gh copilot -- plugin install mbertani/opsx-feature-dev
 ```
 
-**Note:** The Copilot version requires the `feature-dev` plugin to be installed (for the specialized agents: `code-explorer`, `code-architect`, `code-reviewer`). If not already installed:
-
-```bash
-copilot plugin install github/copilot-plugins:feature-dev
-# or
-gh copilot -- plugin install github/copilot-plugins:feature-dev
-```
-
 ## Usage
 
 ### Claude Code
