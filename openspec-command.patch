@@ -1,6 +1,6 @@
 --- a/commands/feature-dev.md
 +++ b/commands/feature-dev.md
-@@ -1,46 +1,56 @@
+@@ -1,125 +1,255 @@
  ---
 -description: Guided feature development with codebase understanding and architecture focus
 +description: Guided feature development with deep codebase understanding, architecture design, and OpenSpec artifact-driven documentation. Use when the user wants to build a new feature with proper exploration, design, and documentation tracked through OpenSpec changes.
@@ -63,15 +63,20 @@
  
  **Actions**:
 -1. Launch 2-3 code-explorer agents in parallel. Each agent should:
-+1. Launch 2-3 **code-explorer** agents in parallel. Each agent should:
-    - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
+-   - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
 -   - Target a different aspect of the codebase (eg. similar features, high level understanding, architectural understanding, user experience, etc)
++1. Launch 2-3 **code-explorer** agents in parallel. Each agent should:
++   - Trace the abstractions, architecture and flow of control relevant to the feature
 +   - Target a different aspect of the codebase (e.g. similar features, high level understanding, architectural understanding, user experience)
     - Include a list of 5-10 key files to read
  
     **Example agent prompts**:
-@@ -49,77 +59,196 @@
-    - "Analyze the current implementation of [existing feature/area], tracing through the code comprehensively"
+-   - "Find features similar to [feature] and trace through their implementation comprehensively"
+-   - "Map the architecture and abstractions for [feature area], tracing through the code comprehensively"
+-   - "Analyze the current implementation of [existing feature/area], tracing through the code comprehensively"
++   - "Find features similar to [feature] and trace through their implementation"
++   - "Map the architecture and abstractions for [feature area]"
++   - "Analyze the current implementation of [existing feature/area]"
     - "Identify UI patterns, testing approaches, or extension points relevant to [feature]"
  
 -2. Once the agents return, please read all files identified by agents to build deep understanding
@@ -86,7 +91,8 @@
 -**Goal**: Fill in gaps and resolve all ambiguities before designing
 +**Goal**: Fill in gaps and resolve all ambiguities before designing.
  
- **CRITICAL**: This is one of the most important phases. DO NOT SKIP.
+-**CRITICAL**: This is one of the most important phases. DO NOT SKIP.
++Don't skip this phase: gaps resolved now are much cheaper than a redesign later.
  
  **Actions**:
 -1. Review the codebase findings and original feature request
@@ -158,7 +164,7 @@
 +**Goal**: Build the feature by working through OpenSpec tasks.
  
 -**DO NOT START WITHOUT USER APPROVAL**
-+**DO NOT START WITHOUT USER APPROVAL.**
++Start only after the user has explicitly approved the design and artifacts.
  
  **Actions**:
 -1. Wait for explicit user approval
@@ -167,8 +173,7 @@
 -4. Follow codebase conventions strictly
 -5. Write clean, well-documented code
 -6. Update todos as you progress
-+1. Wait for explicit user approval.
-+2. Get apply instructions:
++1. Get apply instructions:
 +   ```bash
 +   openspec instructions apply --change "<name>" --json
 +   ```
@@ -202,10 +207,12 @@
 +   - Simplicity / DRY / Elegance
 +   - Bugs / Functional correctness
 +   - Project conventions / Abstractions
-+2. Consolidate findings and identify highest severity issues that you recommend fixing.
+ 
++   Give each reviewer the list of files changed for this feature - reviewers have no Bash tool, so they can't run `git diff` themselves.
++2. Consolidate findings, drop low-confidence ones (below ~80) and nitpicks, and identify the highest severity issues that you recommend fixing.
 +3. **Present findings to user and ask what they want to do** (fix now, fix later, or proceed as-is).
 +4. Address issues based on user decision.
- 
++
  ---
  
 -## Phase 7: Summary

@@ -106,7 +106,7 @@ Initial request: $ARGUMENTS
 
 **Goal**: Fill in gaps and resolve all ambiguities before designing.
 
-**CRITICAL**: This is one of the most important phases. DO NOT SKIP.
+Don't skip this phase: gaps resolved now are much cheaper than a redesign later.
 
 **Actions**:
 1. Review the codebase findings and original feature request.
@@ -199,7 +199,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Goal**: Build the feature by working through OpenSpec tasks.
 
-**DO NOT START WITHOUT USER APPROVAL.**
+Start only after the user has explicitly approved the design and artifacts.
 
 **Actions**:
 1. Wait for explicit user approval using ask_user tool.
