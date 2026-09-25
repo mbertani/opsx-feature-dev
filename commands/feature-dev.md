@@ -49,14 +49,14 @@ Initial request: $ARGUMENTS
 
 **Actions**:
 1. Launch 2-3 **code-explorer** agents in parallel. Each agent should:
-   - Trace through the code comprehensively and focus on getting a comprehensive understanding of abstractions, architecture and flow of control
+   - Trace the abstractions, architecture and flow of control relevant to the feature
    - Target a different aspect of the codebase (e.g. similar features, high level understanding, architectural understanding, user experience)
    - Include a list of 5-10 key files to read
 
    **Example agent prompts**:
-   - "Find features similar to [feature] and trace through their implementation comprehensively"
-   - "Map the architecture and abstractions for [feature area], tracing through the code comprehensively"
-   - "Analyze the current implementation of [existing feature/area], tracing through the code comprehensively"
+   - "Find features similar to [feature] and trace through their implementation"
+   - "Map the architecture and abstractions for [feature area]"
+   - "Analyze the current implementation of [existing feature/area]"
    - "Identify UI patterns, testing approaches, or extension points relevant to [feature]"
 
 2. Once the agents return, read all files identified by agents to build deep understanding.
@@ -68,7 +68,7 @@ Initial request: $ARGUMENTS
 
 **Goal**: Fill in gaps and resolve all ambiguities before designing.
 
-**CRITICAL**: This is one of the most important phases. DO NOT SKIP.
+Don't skip this phase: gaps resolved now are much cheaper than a redesign later.
 
 **Actions**:
 1. Review the codebase findings and original feature request.
@@ -128,11 +128,10 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Goal**: Build the feature by working through OpenSpec tasks.
 
-**DO NOT START WITHOUT USER APPROVAL.**
+Start only after the user has explicitly approved the design and artifacts.
 
 **Actions**:
-1. Wait for explicit user approval.
-2. Get apply instructions:
+1. Get apply instructions:
    ```bash
    openspec instructions apply --change "<name>" --json
    ```
@@ -161,7 +160,9 @@ If the user says "whatever you think is best", provide your recommendation and g
    - Simplicity / DRY / Elegance
    - Bugs / Functional correctness
    - Project conventions / Abstractions
-2. Consolidate findings and identify highest severity issues that you recommend fixing.
+
+   Give each reviewer the list of files changed for this feature - reviewers have no Bash tool, so they can't run `git diff` themselves.
+2. Consolidate findings, drop low-confidence ones (below ~80) and nitpicks, and identify the highest severity issues that you recommend fixing.
 3. **Present findings to user and ask what they want to do** (fix now, fix later, or proceed as-is).
 4. Address issues based on user decision.
 

@@ -161,7 +161,7 @@ The script will:
 - Show whether a new upstream version is available (hash comparison)
 - Diff each agent file and the command file
 - With `--apply`:
-  - Copy updated agent files directly (these are identical to upstream)
+  - Copy the upstream agent files, then apply `openspec-agents.patch` to re-add local model choices and prompt tuning for current Claude models
   - Copy the upstream command file, then apply `openspec-command.patch` to re-add OpenSpec customizations
   - Update the `UPSTREAM_VERSION` hash
 
@@ -177,6 +177,8 @@ If upstream changes conflict with the OpenSpec patch, the script will report the
    ```
 4. Fix the patch header to use git-style paths (`a/commands/feature-dev.md` / `b/commands/feature-dev.md`)
 5. Commit both the updated command and patch files
+
+The same applies to `openspec-agents.patch` if it fails: re-apply its changes to the upstream agents by hand, then regenerate it with `diff -u <upstream-agent-path> agents/<agent>.md` for each agent (git-style `a/agents/...` / `b/agents/...` headers).
 
 ### Syncing with OpenSpec CLI
 
@@ -229,6 +231,7 @@ opsx-feature-dev/
 ├── check-compat.sh          # OpenSpec compatibility check
 ├── update-from-upstream.sh  # Sync with upstream feature-dev
 ├── openspec-command.patch   # OpenSpec additions to upstream command
+├── openspec-agents.patch    # Model choices and prompt tuning on top of upstream agents
 ├── OPENSPEC_COMPAT         # OpenSpec version tracking
 └── UPSTREAM_VERSION         # Upstream sync tracking
 ```

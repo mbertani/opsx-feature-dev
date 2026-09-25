@@ -73,7 +73,7 @@ for agent in code-explorer code-architect code-reviewer; do
   if diff -q "$local_file" "$upstream_file" &>/dev/null; then
     echo "  OK    $agent (identical)"
   else
-    echo "  DIFF  $agent"
+    echo "  DIFF  $agent (expected if openspec-agents.patch touches it)"
     HAS_AGENT_CHANGES=true
   fi
 done
@@ -184,6 +184,26 @@ if [[ "${1:-}" == "--apply" ]]; then
       fi
     fi
   done
+
+  # ── Apply local agent patch (model choices, prompt tuning) ────
+  AGENTS_PATCH="$SCRIPT_DIR/openspec-agents.patch"
+
+  if [[ -f "$AGENTS_PATCH" ]]; then
+    echo ""
+    echo "--- Agents (patch) ---"
+    echo ""
+
+    if git -C "$SCRIPT_DIR" apply "$AGENTS_PATCH" 2>/dev/null; then
+      echo "  OK    Applied local agent patch"
+    elif git -C "$SCRIPT_DIR" apply --3way "$AGENTS_PATCH" 2>/dev/null; then
+      echo "  MERGE Applied local agent patch with 3-way merge (check for conflicts)"
+    else
+      echo "  FAIL  Local agent patch did not apply cleanly."
+      echo "        Agents now match upstream; re-apply the changes in $AGENTS_PATCH by hand,"
+      echo "        then regenerate it with: diff -u <upstream-agent> agents/<agent>.md"
+      echo "        (fix header to use a/ b/ paths)"
+    fi
+  fi
 
   # ── Apply OpenSpec patch to upstream command ───────────────────
   PATCH_FILE="$SCRIPT_DIR/openspec-command.patch"
