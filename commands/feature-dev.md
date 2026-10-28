@@ -1,6 +1,7 @@
 ---
 description: Guided feature development with deep codebase understanding, architecture design, and OpenSpec artifact-driven documentation. Use when the user wants to build a new feature with proper exploration, design, and documentation tracked through OpenSpec changes.
 argument-hint: Optional feature description
+allowed-tools: Bash(openspec:*)
 ---
 
 # OpenSpec Feature Development
@@ -30,16 +31,22 @@ Initial request: $ARGUMENTS
    - What problem are they solving?
    - What should the feature do?
    - Any constraints or requirements?
-3. Derive a kebab-case change name from the description (e.g., "add user authentication" -> `add-user-auth`).
-4. Create the OpenSpec change:
+3. Confirm the project uses OpenSpec:
+   ```bash
+   openspec context --json
+   ```
+   If `root` is `null`, stop and ask the user whether to run `openspec init`. Never create the OpenSpec root yourself (no hand-made `openspec/` files). If `openspec/config.yaml` under `root.path` has a `context` field, apply it as project constraints for the rest of the workflow.
+4. Derive a kebab-case change name from the description (e.g., "add user authentication" -> `add-user-auth`).
+5. Create the OpenSpec change:
    ```bash
    openspec new change "<name>"
    ```
-5. Get the schema and artifact structure:
+6. Get the schema and artifact structure:
    ```bash
    openspec status --change "<name>" --json
    ```
-6. Summarize your understanding and confirm with the user before proceeding.
+   Use `changeRoot` and `artifactPaths` from this output for file locations - don't assume `openspec/changes/<name>/`.
+7. Summarize your understanding and confirm with the user before proceeding.
 
 ---
 
@@ -103,22 +110,26 @@ If the user says "whatever you think is best", provide your recommendation and g
    openspec instructions <artifact-id> --change "<name>" --json
    ```
 
-   Build artifacts in dependency order. For each artifact:
-   - Read dependency artifacts for context.
+   Build artifacts in dependency order (follow each artifact's `requires` in the status output). For each artifact:
+   - Re-read its dependency artifacts from disk - the user may have edited them since you last saw them.
+   - If the instructions contain `skipped`/`warning`, the change declares `skip_specs`: do not create that artifact.
+   - Follow `instruction` - it is authoritative, even for familiar artifact names. If it delegates to a specific skill or command, use that.
    - Use the `template` from instructions as structure.
    - Apply `context` and `rules` as constraints (do NOT copy them into the file).
-   - Write the artifact to `outputPath`.
+   - Write the artifact to `resolvedOutputPath`. If it is a glob, choose a concrete path inside `changeRoot` that matches it.
 
-   Key artifacts to produce:
+   Key artifacts to produce (spec-driven schema):
    - **proposal.md**: What and why - the feature description, motivation, scope, and chosen approach.
+   - **specs/<capability>/spec.md**: Delta specs - the requirements this change adds, modifies, or removes. Apply is blocked without them unless the change declares `skip_specs: true` (pure refactors, docs).
    - **design.md**: How - the architecture decision, component design, data flow, integration points.
-   - **tasks.md**: Implementation steps - concrete, ordered tasks derived from the build sequence.
+   - **tasks.md**: Implementation steps - concrete, ordered tasks derived from the build sequence. Each task group includes its own tests and doc updates, and each task says how you'd know it's done.
 
-6. Verify artifact status:
+6. Verify artifact status and validate:
    ```bash
    openspec status --change "<name>" --json
+   openspec validate "<name>" --strict
    ```
-   Ensure all `applyRequires` artifacts are `done`.
+   `status` only checks that files exist. Make sure every artifact in `applyRequires` *and* everything they transitively `requires` is `done` or `skipped`, and fix any validation errors.
 
 7. **Ask the user if they want to review the OpenSpec artifacts before continuing to implementation.** Pause and wait for their response. If they want to review, list the artifact file paths so they can inspect them. Only proceed to Phase 5 once the user confirms they are ready.
 
@@ -135,17 +146,21 @@ Start only after the user has explicitly approved the design and artifacts.
    ```bash
    openspec instructions apply --change "<name>" --json
    ```
-3. Read all context files listed in the apply instructions.
-4. For each pending task:
+   - `state: "blocked"` with `missingArtifacts` -> go back to Phase 4 and create them. Don't start implementing while blocked.
+   - `state: "all_done"` -> skip to Phase 6.
+2. Read every file listed in `contextFiles`. Apply `context` as project constraints and consider any `operationGuidance` - neither is evidence that a task is done.
+3. For each pending task:
    - Show which task is being worked on.
    - Make the code changes required.
    - Keep changes minimal and focused.
-   - Mark task complete in the tasks file: `- [ ]` -> `- [x]`
+   - Mark the task complete at its returned `sourcePath` and `line`: `- [ ]` -> `- [x]`. If that line no longer matches the task, rerun the apply instructions first.
+   - Only mark a task done when its specified behavior is fully implemented.
    - Continue to next task.
-5. Update todos as you progress.
+4. Update todos as you progress, and rerun the apply instructions to confirm progress.
 
 **Pause if:**
 - Task is unclear -> ask for clarification
+- A task needs work beyond the spec, or you're tempted to narrow, defer, or drop specified behavior -> surface the added scope and ask
 - Implementation reveals a design issue -> suggest updating artifacts
 - Error or blocker encountered -> report and wait for guidance
 
@@ -178,13 +193,14 @@ Start only after the user has explicitly approved the design and artifacts.
    ```bash
    openspec status --change "<name>"
    ```
+   The output ends with a `Next:` line naming the command that moves the change forward.
 3. Summarize:
    - What was built
    - Key decisions made
    - Files modified
    - Suggested next steps
 4. Ask the user if they want to archive the change now.
-   - If yes, suggest running `/opsx:archive`
+   - If yes, suggest `/opsx:verify` (if installed) to check the implementation against the specs, then `/opsx:archive`
    - If no, note that the change remains active for future work.
 
 ---
@@ -222,7 +238,7 @@ Task complete
 ### Next Steps
 - ...
 
-Ready to archive. Run `/opsx:archive` when done.
+All tracked tasks complete. Review or run `/opsx:verify`, then `/opsx:archive`.
 ```
 
 **On Pause (Issue Encountered):**
@@ -247,7 +263,9 @@ What would you like to do?
 ## Guardrails
 
 - Always create the OpenSpec change in Phase 1 before doing design work.
+- Never create the OpenSpec root as a side effect - if `openspec context --json` finds none, ask before `openspec init`.
 - Use `openspec instructions` to get artifact templates and rules - don't invent structure.
+- Use paths from CLI JSON (`changeRoot`, `resolvedOutputPath`, `contextFiles`, `sourcePath`) - don't assume repo-local paths.
 - `context` and `rules` from instructions are constraints for YOU, not content for the artifact files.
 - Keep code changes minimal and scoped to each task.
 - If implementation reveals design issues, suggest updating OpenSpec artifacts before continuing.
