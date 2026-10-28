@@ -91,8 +91,8 @@ Before submitting changes, test on **both platforms** if possible:
 ### Testing on Claude Code
 
 ```bash
-# Install locally
-claude plugin install /path/to/opsx-feature-dev
+# Load your local checkout for this session (no install needed)
+claude --plugin-dir /path/to/opsx-feature-dev
 
 # Test the workflow
 /opsx-feature-dev:feature-dev Test feature description
@@ -101,15 +101,14 @@ claude plugin install /path/to/opsx-feature-dev
 ### Testing on GitHub Copilot
 
 ```bash
-# Install locally
-copilot plugin install /path/to/opsx-feature-dev
-
-# Or via gh wrapper
-gh copilot -- plugin install /path/to/opsx-feature-dev
+# Load your local checkout for this session (direct installs from local paths are deprecated)
+copilot --plugin-dir /path/to/opsx-feature-dev
 
 # Test the workflow
-copilot -i "/opsx-feature-dev Test feature description" --allow-all-tools
+copilot --plugin-dir /path/to/opsx-feature-dev -i "/openspec-feature-dev Test feature description" --allow-all-tools
 ```
+
+If the marketplace version is also installed, disable it while testing (`copilot plugin disable opsx-feature-dev@opsx-feature-dev`) so you exercise your local copy.
 
 ## Syncing with Upstream
 

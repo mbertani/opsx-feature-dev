@@ -54,17 +54,25 @@ claude plugin install opsx-feature-dev
 
 ### For GitHub Copilot
 
-Install directly from the GitHub repository:
+Copilot CLI reads the same marketplace file. Add the repo as a marketplace source:
 
 ```bash
-copilot plugin install mbertani/opsx-feature-dev
+copilot plugin marketplace add mbertani/opsx-feature-dev
 ```
 
-Or install via the `gh` wrapper:
+Then install the plugin from it:
 
 ```bash
-gh copilot -- plugin install mbertani/opsx-feature-dev
+copilot plugin install opsx-feature-dev@opsx-feature-dev
 ```
+
+(With the `gh` wrapper, prefix the commands with `gh copilot --`.)
+
+The code-explorer/architect/reviewer agents come from the `feature-dev` plugin: `copilot plugin marketplace add anthropics/claude-code`, then `copilot plugin install feature-dev@claude-code-plugins`.
+
+> Don't use `copilot plugin install mbertani/opsx-feature-dev`. Direct installs from repos, URLs or local paths are deprecated in Copilot CLI. If you installed it that way, run `copilot plugin uninstall opsx-feature-dev` and reinstall from the marketplace.
+
+To update later: `copilot plugin marketplace update opsx-feature-dev`, then `copilot plugin update opsx-feature-dev@opsx-feature-dev`.
 
 ## Usage
 
