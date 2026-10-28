@@ -14,7 +14,7 @@ TESTED_VERSION=$(grep '^TESTED_VERSION=' "$COMPAT_FILE" | cut -d= -f2)
 # Check openspec is installed
 if ! command -v openspec &>/dev/null; then
   echo "ERROR: openspec CLI not found. Install it first:"
-  echo "  https://github.com/openspec-dev/openspec"
+  echo "  https://github.com/Fission-AI/OpenSpec"
   exit 1
 fi
 
@@ -39,9 +39,11 @@ echo "--- Verifying CLI commands used by feature-dev ---"
 echo ""
 
 CMDS=(
+  "openspec context --help"
   "openspec new change --help"
   "openspec status --help"
   "openspec instructions --help"
+  "openspec validate --help"
   "openspec list --help"
 )
 

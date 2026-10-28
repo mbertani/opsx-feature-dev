@@ -31,7 +31,7 @@ Instead of jumping straight into code, this plugin guides you through a 7-phase 
 - **One of the following:**
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed, **or**
   - [GitHub Copilot CLI](https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line) installed
-- [OpenSpec CLI](https://github.com/Fission-AI/OpenSpec/) installed and configured in your project
+- [OpenSpec CLI](https://github.com/Fission-AI/OpenSpec/) 1.15.0 or later, installed and configured in your project
   ```bash
   brew install openspec
   ```
@@ -192,21 +192,23 @@ This compares your installed openspec CLI version against the version recorded i
 
 #### OpenSpec CLI commands used by this plugin
 
+- `openspec context --json` — resolves the OpenSpec root and project context
 - `openspec new change "<name>"` — creates a change directory
-- `openspec status --change "<name>" --json` — reads artifact graph and schema
-- `openspec instructions <artifact-id> --change "<name>" --json` — gets artifact templates/rules
-- `openspec instructions apply --change "<name>" --json` — gets implementation context
+- `openspec status --change "<name>" --json` — reads artifact graph (`requires` edges), schema and paths (`changeRoot`, `artifactPaths`)
+- `openspec instructions <artifact-id> --change "<name>" --json` — gets artifact templates/rules and `resolvedOutputPath`
+- `openspec validate "<name>" --strict` — validates the change before implementation
+- `openspec instructions apply --change "<name>" --json` — gets implementation context and tasks with `sourcePath`/`line`
 - `openspec list --json` — lists active changes
 
-If any of these change their JSON output shape or flags, the workflow files may need updating (both `commands/feature-dev.md` for Claude and `.copilot/skills/opsx-feature-dev.md` for Copilot).
+If any of these change their JSON output shape or flags, the workflow files may need updating (`commands/feature-dev.md` for Claude, and `commands/openspec-feature-dev.md` + `.copilot/skills/openspec-feature-dev.md` for Copilot).
 
 #### After an openspec CLI upgrade
 
 1. Run `./check-compat.sh` to see if anything changed
-2. If the script reports issues, check the [openspec changelog](https://github.com/openspec-dev/openspec/releases)
+2. If the script reports issues, check the [openspec changelog](https://github.com/Fission-AI/OpenSpec/releases)
 3. Update both workflow files if CLI flags or JSON output changed:
    - `commands/feature-dev.md` (Claude)
-   - `.copilot/skills/opsx-feature-dev.md` (Copilot)
+   - `commands/openspec-feature-dev.md` and `.copilot/skills/openspec-feature-dev.md` (Copilot, keep identical)
 4. Update `OPENSPEC_COMPAT` with the new tested version
 
 ## Repository Structure
